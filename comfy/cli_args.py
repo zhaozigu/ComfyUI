@@ -178,6 +178,31 @@ parser.add_argument(
 
 parser.add_argument("--user-directory", type=is_valid_directory, default=None, help="Set the ComfyUI user directory with an absolute path.")
 
+parser.add_argument(
+    '--minio-endpoint', 
+    type=str,
+    help='Set MinIO endpoint (e.g., localhost:5200)'
+)
+    
+parser.add_argument(
+    '--minio-access-key',
+    type=str, 
+    help='Set MinIO access key'
+)
+    
+parser.add_argument(
+    '--minio-secret-key',
+    type=str,
+    help='Set MinIO secret key'
+)
+    
+parser.add_argument(
+    '--minio-ssl-secure',
+    type=bool,
+    default=False,
+    help='Enable/disable SSL for MinIO connection'
+)
+
 if comfy.options.args_parsing:
     args = parser.parse_args()
 else:

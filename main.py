@@ -52,7 +52,28 @@ def apply_custom_paths():
         user_dir = os.path.abspath(args.user_directory)
         logging.info(f"Setting user directory to: {user_dir}")
         folder_paths.set_user_directory(user_dir)
-
+        
+    
+def setup_minio_config() -> None:
+    if args.minio_endpoint:
+        endpoint = args.minio_endpoint
+        logging.info(f"Setting MinIO endpoint to: {endpoint}")
+        folder_paths.set_minio_endpoint(endpoint)
+        
+    if args.minio_access_key:
+        access_key = args.minio_access_key
+        logging.info(f"Setting MinIO access key to: {access_key}")
+        folder_paths.set_minio_access_key(access_key)
+        
+    if args.minio_secret_key:
+        secret_key = args.minio_secret_key
+        logging.info(f"Setting MinIO secret key to: {secret_key}")
+        folder_paths.set_minio_secret_key(secret_key)
+        
+    if args.minio_ssl_secure:
+        ssl_secure = args.minio_ssl_secure
+        logging.info(f"Setting MinIO SSL secure to: {ssl_secure}")
+        folder_paths.set_minio_ssl_secure(ssl_secure)
 
 def execute_prestartup_script():
     def execute_script(script_path):
@@ -95,6 +116,7 @@ def execute_prestartup_script():
         logging.info("")
 
 apply_custom_paths()
+setup_minio_config()
 execute_prestartup_script()
 
 

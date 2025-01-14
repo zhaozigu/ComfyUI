@@ -4,6 +4,8 @@ import os
 import time
 import mimetypes
 import logging
+
+from minio import Minio
 from typing import Literal
 from collections.abc import Collection
 
@@ -173,7 +175,95 @@ def annotated_filepath(name: str) -> tuple[str, str | None]:
 
     return name, base_dir
 
+class MinioHelper:
+    def __init__(self, endpoint: str, access_key: str, secret_key: str, secure: bool = True):
+        """初始化 Minio 客户端
+        
+        Args:
+            endpoint: Minio服务器地址
+            access_key: 访问密钥
+            secret_key: 秘密密钥
+            secure: 是否使用HTTPS
+        """
+        self.client = Minio(
+            endpoint=endpoint,
+            access_key=access_key,
+            secret_key=secret_key,
+            secure=secure
+        )
+        
+    def check_and_download(self, bucket_name: str, object_name: str, file_path: str) -> bool:
+        """检查本地文件是否存在，不存在则从Minio下载
+        
+        Args:
+            bucket_name: 桶名称
+            object_name: 对象名称（Minio中的路径）
+            file_path: 本地保存路径
+            
+        Returns:
+            bool: 文件是否存在或下载成功
+        """
+        # 如果本地文件已存在，直接返回True
+        if os.path.exists(file_path):
+            return True
+            
+        try:
+            # 确保目标目录存在
+            os.makedirs(os.path.dirname(file_path), exist_ok=True)
+            logging.info("尝试从Minio下载文件")
+            
+            # 从Minio下载文件
+            self.client.fget_object(
+                bucket_name=bucket_name,
+                object_name=object_name,
+                file_path=file_path
+            )
+            return True
+        except Exception as e:
+            logging.error(f"从Minio下载文件失败: {str(e)}")
+            return False
 
+minio_endpoint = "localhost:5200"
+minio_access_key = "R1pgTvwrHGwO60yOxkQd"
+minio_secret_key = "cWuHVgYpMswGioVnuPAXaaOo73uLtqD3Doa8KITH"
+minio_ssl_secure = False
+
+def get_minio_endpoint() -> str:
+    return minio_endpoint
+
+def set_minio_endpoint(endpoint: str) -> None:
+    global minio_endpoint
+    minio_endpoint = endpoint
+
+def get_minio_access_key() -> str:
+    return minio_access_key
+
+def set_minio_access_key(access_key: str) -> None:
+    global minio_access_key
+    minio_access_key = access_key
+
+def get_minio_secret_key() -> str:
+    return minio_secret_key
+
+def set_minio_secret_key(secret_key: str) -> None:
+    global minio_secret_key
+    minio_secret_key = secret_key
+
+def get_minio_ssl_secure() -> bool:
+    return minio_ssl_secure
+
+def set_minio_ssl_secure(ssl_secure: bool) -> None:
+    global minio_ssl_secure
+    minio_ssl_secure = ssl_secure
+
+
+minio_helper = MinioHelper(
+    endpoint=minio_endpoint,
+    access_key=minio_access_key,
+    secret_key=minio_secret_key,
+    secure=minio_ssl_secure
+)
+    
 def get_annotated_filepath(name: str, default_dir: str | None=None) -> str:
     name, base_dir = annotated_filepath(name)
 
@@ -182,8 +272,18 @@ def get_annotated_filepath(name: str, default_dir: str | None=None) -> str:
             base_dir = default_dir
         else:
             base_dir = get_input_directory()  # fallback path
-
-    return os.path.join(base_dir, name)
+        
+    file_path = os.path.join(base_dir, name)
+    
+    # 如果提供了minio_helper，则检查并下载文件
+    if minio_helper:
+        minio_helper.check_and_download(
+            bucket_name="input",
+            object_name=name,
+            file_path=file_path
+        )
+    
+    return file_path
 
 
 def exists_annotated_filepath(name) -> bool:
@@ -193,6 +293,13 @@ def exists_annotated_filepath(name) -> bool:
         base_dir = get_input_directory()  # fallback path
 
     filepath = os.path.join(base_dir, name)
+    
+    minio_helper.check_and_download(
+        bucket_name="input",
+        object_name=name,
+        file_path=filepath
+    )
+    
     return os.path.exists(filepath)
 
 
