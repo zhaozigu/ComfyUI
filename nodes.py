@@ -1611,7 +1611,12 @@ class SaveImage:
 
             filename_with_batch_num = filename.replace("%batch_num%", str(batch_number))
             file = f"{filename_with_batch_num}_{counter:05}_.png"
-            img.save(os.path.join(full_output_folder, file), pnginfo=metadata, compress_level=self.compress_level)
+            filepath = os.path.join(full_output_folder, file)
+            img.save(os.path.join(full_output_folder, filepath), pnginfo=metadata, compress_level=self.compress_level)
+            
+            # minio upload
+            folder_paths.minio_helper.upload_file("output", file, filepath)
+            
             results.append({
                 "filename": file,
                 "subfolder": subfolder,

@@ -223,6 +223,44 @@ class MinioHelper:
             logging.error(f"从Minio下载文件失败: {str(e)}")
             return False
 
+    def upload_file(self, bucket_name: str, object_name: str, file_path: str) -> bool:
+        """上传本地文件到 Minio 存储桶
+        
+        Args:
+            bucket_name: 桶名称
+            object_name: 对象名称（Minio中的存储路径）
+            file_path: 本地文件路径
+            
+        Returns:
+            bool: 上传是否成功
+        """
+        try:
+            # 检查本地文件是否存在
+            if not os.path.exists(file_path):
+                logging.error(f"要上传的本地文件不存在: {file_path}")
+                return False
+                
+            # 确保存储桶存在
+            if not self.client.bucket_exists(bucket_name):
+                logging.info(f"存储桶 {bucket_name} 不存在，正在创建")
+                self.client.make_bucket(bucket_name)
+                
+            logging.info(f"开始上传文件到 Minio: {object_name}")
+            
+            # 上传文件到 Minio
+            self.client.fput_object(
+                bucket_name=bucket_name,
+                object_name=object_name,
+                file_path=file_path
+            )
+            
+            logging.info("文件上传成功")
+            return True
+            
+        except Exception as e:
+            logging.error(f"上传文件到 Minio 失败: {str(e)}")
+            return False
+
 minio_endpoint = "localhost:5200"
 minio_access_key = "R1pgTvwrHGwO60yOxkQd"
 minio_secret_key = "cWuHVgYpMswGioVnuPAXaaOo73uLtqD3Doa8KITH"

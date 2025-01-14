@@ -182,9 +182,13 @@ class SaveAudio:
             torchaudio.save(buff, waveform, audio["sample_rate"], format="FLAC")
 
             buff = insert_or_replace_vorbis_comment(buff, metadata)
-
-            with open(os.path.join(full_output_folder, file), 'wb') as f:
+            
+            filepath = os.path.join(full_output_folder, file)
+            with open(filepath, 'wb') as f:
                 f.write(buff.getbuffer())
+                
+            # minio upload
+            folder_paths.minio_helper.upload_file("output", file, filepath)
 
             results.append({
                 "filename": file,
