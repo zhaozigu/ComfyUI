@@ -46,7 +46,20 @@ class ModelFileManager:
             folder = request.match_info.get("folder", None)
             if not folder in folder_paths.folder_names_and_paths:
                 return web.Response(status=404)
+                
+            # 获取本地文件列表
             files = self.get_model_file_list(folder)
+            local_names = {file["name"] for file in files}
+            
+            if folder_paths.minio_helper and folder == "checkpoints":
+                # 只添加不在本地文件列表中的 minio 文件
+                minio_models = [
+                    {"name": name, "pathIndex": 0} 
+                    for name in folder_paths.minio_helper.get_list_objects("checkpoints")
+                    if name not in local_names
+                ]
+                files.extend(minio_models)
+            
             return web.json_response(files)
 
         @routes.get("/experiment/models/preview/{folder}/{path_index}/{filename:.*}")

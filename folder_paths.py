@@ -6,7 +6,7 @@ import mimetypes
 import logging
 
 from minio import Minio
-from typing import Literal
+from typing import List, Literal
 from collections.abc import Collection
 
 supported_pt_extensions: set[str] = {'.ckpt', '.pt', '.bin', '.pth', '.safetensors', '.pkl', '.sft'}
@@ -191,6 +191,10 @@ class MinioHelper:
             secret_key=secret_key,
             secure=secure
         )
+    
+    def get_list_objects(self, bucket_name: str, recursive=True) -> List[str]:
+        logging.info(f"尝试从 Minio 的 {bucket_name} 中读取列表")
+        return [obj.object_name for obj in self.client.list_objects(bucket_name, recursive=True)]
         
     def check_and_download(self, bucket_name: str, object_name: str, file_path: str) -> bool:
         """检查本地文件是否存在，不存在则从Minio下载
@@ -301,6 +305,10 @@ minio_helper = MinioHelper(
     secret_key=minio_secret_key,
     secure=minio_ssl_secure
 )
+
+def download_checkpoint_from_minio(modelname: str):
+    if minio_helper:
+        minio_helper.check_and_download("checkpoints", modelname, get_full_path_without_check("checkpoints", modelname))
     
 def get_annotated_filepath(name: str, default_dir: str | None=None) -> str:
     name, base_dir = annotated_filepath(name)
@@ -407,6 +415,17 @@ def recursive_search(directory: str, excluded_dir_names: list[str] | None=None) 
 def filter_files_extensions(files: Collection[str], extensions: Collection[str]) -> list[str]:
     return sorted(list(filter(lambda a: os.path.splitext(a)[-1].lower() in extensions or len(extensions) == 0, files)))
 
+
+def get_full_path_without_check(folder_name: str, filename: str) -> str:
+    global folder_names_and_paths
+    folder_name = map_legacy(folder_name)
+    if folder_name not in folder_names_and_paths:
+        return None
+    folders = folder_names_and_paths[folder_name]
+    filename = os.path.relpath(os.path.join("/", filename), "/")
+    for x in folders[0]:
+        full_path = os.path.join(x, filename)
+        return full_path
 
 
 def get_full_path(folder_name: str, filename: str) -> str | None:
