@@ -306,9 +306,15 @@ minio_helper = MinioHelper(
     secure=minio_ssl_secure
 )
 
-def download_checkpoint_from_minio(modelname: str):
+def download_model_from_minio(categories: str, modelname: str):
     if minio_helper:
-        minio_helper.check_and_download("checkpoints", modelname, get_full_path_without_check("checkpoints", modelname))
+        minio_helper.check_and_download(categories, modelname, get_full_path_without_check(categories, modelname))
+
+def download_lora_from_minio(modelname: str):
+    download_model_from_minio("loras", modelname)
+
+def download_checkpoint_from_minio(modelname: str):
+    download_model_from_minio("checkpoints", modelname)
     
 def get_annotated_filepath(name: str, default_dir: str | None=None) -> str:
     name, base_dir = annotated_filepath(name)
