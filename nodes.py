@@ -611,7 +611,11 @@ class DiffusersLoader:
 class unCLIPCheckpointLoader:
     @classmethod
     def INPUT_TYPES(s):
-        return {"required": { "ckpt_name": (folder_paths.get_filename_list("checkpoints"), ),
+        ckpt_names = folder_paths.get_filename_list("checkpoints")
+        if folder_paths.minio_helper:
+            ckpt_names.extend(folder_paths.minio_helper.get_list_objects("checkpoints"))
+            ckpt_names = list(set(ckpt_names))
+        return {"required": { "ckpt_name": (ckpt_names, ),
                              }}
     RETURN_TYPES = ("MODEL", "CLIP", "VAE", "CLIP_VISION")
     FUNCTION = "load_checkpoint"
@@ -619,6 +623,8 @@ class unCLIPCheckpointLoader:
     CATEGORY = "loaders"
 
     def load_checkpoint(self, ckpt_name, output_vae=True, output_clip=True):
+        folder_paths.download_checkpoint_from_minio(ckpt_name)
+        
         ckpt_path = folder_paths.get_full_path_or_raise("checkpoints", ckpt_name)
         out = comfy.sd.load_checkpoint_guess_config(ckpt_path, output_vae=True, output_clip=True, output_clipvision=True, embedding_directory=folder_paths.get_folder_paths("embeddings"))
         return out
