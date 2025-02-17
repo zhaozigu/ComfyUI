@@ -533,8 +533,12 @@ class LoadLatent:
 class CheckpointLoader:
     @classmethod
     def INPUT_TYPES(s):
+        ckpt_names = folder_paths.get_filename_list("checkpoints")
+        if folder_paths.minio_helper:
+            ckpt_names.extend(folder_paths.minio_helper.get_list_objects("checkpoints"))
+            ckpt_names = list(set(ckpt_names))
         return {"required": { "config_name": (folder_paths.get_filename_list("configs"), ),
-                              "ckpt_name": (folder_paths.get_filename_list("checkpoints"), )}}
+                              "ckpt_name": (ckpt_names, )}}
     RETURN_TYPES = ("MODEL", "CLIP", "VAE")
     FUNCTION = "load_checkpoint"
 
@@ -543,6 +547,8 @@ class CheckpointLoader:
 
     def load_checkpoint(self, config_name, ckpt_name):
         config_path = folder_paths.get_full_path("configs", config_name)
+        folder_paths.download_checkpoint_from_minio(ckpt_name)
+        
         ckpt_path = folder_paths.get_full_path_or_raise("checkpoints", ckpt_name)
         return comfy.sd.load_checkpoint(config_path, ckpt_path, output_vae=True, output_clip=True, embedding_directory=folder_paths.get_folder_paths("embeddings"))
 
