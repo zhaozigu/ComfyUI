@@ -4,7 +4,7 @@ import os
 import time
 import mimetypes
 import logging
-
+from tqdm import tqdm
 from minio import Minio
 from typing import List, Literal
 from collections.abc import Collection
@@ -219,14 +219,24 @@ class MinioHelper:
         try:
             # 确保目标目录存在
             os.makedirs(os.path.dirname(file_path), exist_ok=True)
-            logging.info("尝试从Minio下载文件")
             
-            # 从Minio下载文件
-            self.client.fget_object(
-                bucket_name=bucket_name,
-                object_name=object_name,
-                file_path=file_path
+            stat = self.client.stat_object(bucket_name, object_name)
+            data = self.client.get_object(bucket_name, object_name)
+            
+            pbar = tqdm(
+                total=stat.size,
+                unit='B',
+                unit_scale=True,
+                desc=f"下载 {os.path.basename(file_path)}"
             )
+            
+            # 缓冲
+            with open(file_path, 'wb') as file_data:
+                for d in data.stream(512*1024):
+                    file_data.write(d)
+                    pbar.update(len(d))
+            
+            pbar.close()
             return True
         except Exception as e:
             logging.error(f"从Minio下载文件失败: {str(e)}")
