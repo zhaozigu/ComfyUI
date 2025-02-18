@@ -198,6 +198,7 @@ class MinioHelper:
             objects = [obj.object_name for obj in self.client.list_objects(bucket_name, recursive=True)]
             return objects
         except Exception as e:
+            logging.error(f"读取列表文件失败: {str(e)}")
             return []
         
     def check_and_download(self, bucket_name: str, object_name: str, file_path: str) -> bool:
