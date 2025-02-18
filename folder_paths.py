@@ -310,12 +310,18 @@ minio_helper = MinioHelper(
     secure=minio_ssl_secure
 )
 
-def get_checkpoint_object_names():
-    ckpt_names = get_filename_list("checkpoints")
+def get_object_names(folder: str):
+    ckpt_names = get_filename_list(folder)
     if minio_helper:
-        ckpt_names.extend(minio_helper.get_list_objects("checkpoints"))
+        ckpt_names.extend(minio_helper.get_list_objects(folder))
         ckpt_names = list(set(ckpt_names))
     return ckpt_names
+
+def get_checkpoint_object_names():
+    return get_object_names("checkpoints")
+
+def get_loras_object_names():
+    return get_object_names("loras")
 
 def download_model_from_minio(categories: str, modelname: str):
     if minio_helper:

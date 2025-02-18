@@ -641,10 +641,7 @@ class LoraLoader:
 
     @classmethod
     def INPUT_TYPES(s):
-        loras_names = folder_paths.get_filename_list("loras")
-        if folder_paths.minio_helper:
-            loras_names.extend(folder_paths.minio_helper.get_list_objects("loras"))
-            loras_names = list(set(loras_names))
+        loras_names = folder_paths.get_loras_object_names()
         return {
             "required": {
                 "model": ("MODEL", {"tooltip": "The diffusion model the LoRA will be applied to."}),
