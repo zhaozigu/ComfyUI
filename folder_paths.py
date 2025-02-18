@@ -193,8 +193,12 @@ class MinioHelper:
         )
     
     def get_list_objects(self, bucket_name: str, recursive=True) -> List[str]:
-        logging.info(f"尝试从 Minio 的 {bucket_name} 中读取列表")
-        return [obj.object_name for obj in self.client.list_objects(bucket_name, recursive=True)]
+        try:
+            logging.info(f"尝试从 Minio 的 {bucket_name} 中读取列表")
+            objects = [obj.object_name for obj in self.client.list_objects(bucket_name, recursive=True)]
+            return objects
+        except Exception as e:
+            return []
         
     def check_and_download(self, bucket_name: str, object_name: str, file_path: str) -> bool:
         """检查本地文件是否存在，不存在则从Minio下载

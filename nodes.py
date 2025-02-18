@@ -651,11 +651,15 @@ class LoraLoader:
 
     @classmethod
     def INPUT_TYPES(s):
+        loras_names = folder_paths.get_filename_list("loras")
+        if folder_paths.minio_helper:
+            loras_names.extend(folder_paths.minio_helper.get_list_objects("loras"))
+            loras_names = list(set(loras_names))
         return {
             "required": {
                 "model": ("MODEL", {"tooltip": "The diffusion model the LoRA will be applied to."}),
                 "clip": ("CLIP", {"tooltip": "The CLIP model the LoRA will be applied to."}),
-                "lora_name": (folder_paths.get_filename_list("loras"), {"tooltip": "The name of the LoRA."}),
+                "lora_name": (loras_names, {"tooltip": "The name of the LoRA."}),
                 "strength_model": ("FLOAT", {"default": 1.0, "min": -100.0, "max": 100.0, "step": 0.01, "tooltip": "How strongly to modify the diffusion model. This value can be negative."}),
                 "strength_clip": ("FLOAT", {"default": 1.0, "min": -100.0, "max": 100.0, "step": 0.01, "tooltip": "How strongly to modify the CLIP model. This value can be negative."}),
             }
@@ -671,7 +675,8 @@ class LoraLoader:
     def load_lora(self, model, clip, lora_name, strength_model, strength_clip):
         if strength_model == 0 and strength_clip == 0:
             return (model, clip)
-
+        
+        folder_paths.download_lora_from_minio(lora_name)
         lora_path = folder_paths.get_full_path_or_raise("loras", lora_name)
         lora = None
         if self.loaded_lora is not None:
