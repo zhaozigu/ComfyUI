@@ -9,10 +9,7 @@ import comfy_extras.nodes_model_merging
 class ImageOnlyCheckpointLoader:
     @classmethod
     def INPUT_TYPES(s):
-        ckpt_names = folder_paths.get_filename_list("checkpoints")
-        if folder_paths.minio_helper:
-            ckpt_names.extend(folder_paths.minio_helper.get_list_objects("checkpoints"))
-            ckpt_names = list(set(ckpt_names))
+        ckpt_names = folder_paths.get_checkpoint_object_names()
         return {"required": { "ckpt_name": (ckpt_names, ),
                              }}
     RETURN_TYPES = ("MODEL", "CLIP_VISION", "VAE")

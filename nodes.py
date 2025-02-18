@@ -533,10 +533,7 @@ class LoadLatent:
 class CheckpointLoader:
     @classmethod
     def INPUT_TYPES(s):
-        ckpt_names = folder_paths.get_filename_list("checkpoints")
-        if folder_paths.minio_helper:
-            ckpt_names.extend(folder_paths.minio_helper.get_list_objects("checkpoints"))
-            ckpt_names = list(set(ckpt_names))
+        ckpt_names = folder_paths.get_checkpoint_object_names()
         return {"required": { "config_name": (folder_paths.get_filename_list("configs"), ),
                               "ckpt_name": (ckpt_names, )}}
     RETURN_TYPES = ("MODEL", "CLIP", "VAE")
@@ -555,11 +552,7 @@ class CheckpointLoader:
 class CheckpointLoaderSimple:
     @classmethod
     def INPUT_TYPES(s):
-        ckpt_names = folder_paths.get_filename_list("checkpoints")
-        if folder_paths.minio_helper:
-            ckpt_names.extend(folder_paths.minio_helper.get_list_objects("checkpoints"))
-            ckpt_names = list(set(ckpt_names))
-        
+        ckpt_names = folder_paths.get_checkpoint_object_names()
         return {
             "required": {
                 "ckpt_name": (ckpt_names, {"tooltip": "The name of the checkpoint (model) to load."}),
@@ -611,10 +604,7 @@ class DiffusersLoader:
 class unCLIPCheckpointLoader:
     @classmethod
     def INPUT_TYPES(s):
-        ckpt_names = folder_paths.get_filename_list("checkpoints")
-        if folder_paths.minio_helper:
-            ckpt_names.extend(folder_paths.minio_helper.get_list_objects("checkpoints"))
-            ckpt_names = list(set(ckpt_names))
+        ckpt_names = folder_paths.get_checkpoint_object_names()
         return {"required": { "ckpt_name": (ckpt_names, ),
                              }}
     RETURN_TYPES = ("MODEL", "CLIP", "VAE", "CLIP_VISION")
