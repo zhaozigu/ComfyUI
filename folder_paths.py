@@ -285,34 +285,6 @@ minio_access_key = "R1pgTvwrHGwO60yOxkQd"
 minio_secret_key = "cWuHVgYpMswGioVnuPAXaaOo73uLtqD3Doa8KITH"
 minio_ssl_secure = False
 
-def get_minio_endpoint() -> str:
-    return minio_endpoint
-
-def set_minio_endpoint(endpoint: str) -> None:
-    global minio_endpoint
-    minio_endpoint = endpoint
-
-def get_minio_access_key() -> str:
-    return minio_access_key
-
-def set_minio_access_key(access_key: str) -> None:
-    global minio_access_key
-    minio_access_key = access_key
-
-def get_minio_secret_key() -> str:
-    return minio_secret_key
-
-def set_minio_secret_key(secret_key: str) -> None:
-    global minio_secret_key
-    minio_secret_key = secret_key
-
-def get_minio_ssl_secure() -> bool:
-    return minio_ssl_secure
-
-def set_minio_ssl_secure(ssl_secure: bool) -> None:
-    global minio_ssl_secure
-    minio_ssl_secure = ssl_secure
-
 
 minio_helper = MinioHelper(
     endpoint=minio_endpoint,
@@ -320,6 +292,49 @@ minio_helper = MinioHelper(
     secret_key=minio_secret_key,
     secure=minio_ssl_secure
 )
+
+def reload_minio():
+    global minio_helper
+    minio_helper = MinioHelper(
+        endpoint=minio_endpoint,
+        access_key=minio_access_key,
+        secret_key=minio_secret_key,
+        secure=minio_ssl_secure
+    )
+
+
+def get_minio_endpoint() -> str:
+    return minio_endpoint
+
+def set_minio_endpoint(endpoint: str) -> None:
+    global minio_endpoint
+    minio_endpoint = endpoint
+    reload_minio()
+
+def get_minio_access_key() -> str:
+    return minio_access_key
+
+def set_minio_access_key(access_key: str) -> None:
+    global minio_access_key
+    minio_access_key = access_key
+    reload_minio()
+
+def get_minio_secret_key() -> str:
+    return minio_secret_key
+
+def set_minio_secret_key(secret_key: str) -> None:
+    global minio_secret_key
+    minio_secret_key = secret_key
+    reload_minio()
+
+def get_minio_ssl_secure() -> bool:
+    return minio_ssl_secure
+
+def set_minio_ssl_secure(ssl_secure: bool) -> None:
+    global minio_ssl_secure
+    minio_ssl_secure = ssl_secure
+    reload_minio()
+
 
 def get_object_names(folder: str):
     ckpt_names = get_filename_list(folder)
