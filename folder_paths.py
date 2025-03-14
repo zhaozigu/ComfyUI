@@ -1,6 +1,8 @@
 from __future__ import annotations
 
 import os
+import random
+import string
 import time
 import mimetypes
 import logging
@@ -47,6 +49,35 @@ input_directory = os.path.join(os.path.dirname(os.path.realpath(__file__)), "inp
 user_directory = os.path.join(os.path.dirname(os.path.realpath(__file__)), "user")
 
 filename_list_cache: dict[str, tuple[list[str], dict[str, float], float]] = {}
+
+def _random_string(length: int) -> str:
+    letters = string.ascii_letters + string.digits
+    return ''.join(random.choice(letters) for _ in range(length))
+
+def random_string() -> str:
+    return _random_string(8)
+
+
+def extract_name(object_name: str):
+    """
+    提取文件名和后缀
+    
+    Args:
+        object_name (str): 对象名称（文件路径或名称）
+        
+    Returns:
+        tuple: 包含 (filename, suffix) 的元组
+    """
+    # 使用 os.path.basename 提取文件名（不含路径）
+    basename = os.path.basename(object_name)
+    
+    # 使用 os.path.splitext 分离文件名和后缀
+    filename, ext = os.path.splitext(basename)
+    
+    # 去掉后缀名中的点号
+    suffix = ext[1:] if ext else ""
+    
+    return filename, suffix
 
 class CacheHelper:
     """
@@ -266,10 +297,13 @@ class MinioHelper:
                 
             logging.info(f"开始上传文件到 Minio: {object_name}")
             
+            filename, suffix = extract_name(object_name)
+            
+            
             # 上传文件到 Minio
             self.client.fput_object(
                 bucket_name=bucket_name,
-                object_name=object_name,
+                object_name=f"{filename}{random_string()}.{suffix}",
                 file_path=file_path
             )
             
