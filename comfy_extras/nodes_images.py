@@ -121,7 +121,7 @@ class SaveAnimatedWEBP:
 
         c = len(pil_images)
         for i in range(0, c, num_frames):
-            file = f"{filename}_{counter:05}_.webp"
+            file = f"{filename}_{counter:05}_{folder_paths.random_string()}.webp"
             filepath = os.path.join(full_output_folder, file)
             pil_images[i].save(os.path.join(full_output_folder, file), save_all=True, duration=int(1000.0/fps), append_images=pil_images[i + 1:i + num_frames], exif=metadata, lossless=lossless, quality=quality, method=method)
             
@@ -181,7 +181,7 @@ class SaveAnimatedPNG:
                 for x in extra_pnginfo:
                     metadata.add(b"comf", x.encode("latin-1", "strict") + b"\0" + json.dumps(extra_pnginfo[x]).encode("latin-1", "strict"), after_idat=True)
 
-        file = f"{filename}_{counter:05}_.png"
+        file = f"{filename}_{counter:05}_{folder_paths.random_string()}.png"
         filepath = os.path.join(full_output_folder, file)
         pil_images[0].save(filepath, pnginfo=metadata, compress_level=compress_level, save_all=True, duration=int(1000.0/fps), append_images=pil_images[1:])
         

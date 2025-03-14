@@ -296,14 +296,11 @@ class MinioHelper:
                 self.client.make_bucket(bucket_name)
                 
             logging.info(f"开始上传文件到 Minio: {object_name}")
-            
-            filename, suffix = extract_name(object_name)
-            
-            
+                
             # 上传文件到 Minio
             self.client.fput_object(
                 bucket_name=bucket_name,
-                object_name=f"{filename}{random_string()}.{suffix}",
+                object_name=object_name,
                 file_path=file_path
             )
             

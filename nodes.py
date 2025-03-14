@@ -1621,7 +1621,7 @@ class SaveImage:
                         metadata.add_text(x, json.dumps(extra_pnginfo[x]))
 
             filename_with_batch_num = filename.replace("%batch_num%", str(batch_number))
-            file = f"{filename_with_batch_num}_{counter:05}_.png"
+            file = f"{filename_with_batch_num}_{counter:05}_{folder_paths.random_string()}.png"
             filepath = os.path.join(full_output_folder, file)
             img.save(os.path.join(full_output_folder, filepath), pnginfo=metadata, compress_level=self.compress_level)
             
