@@ -613,7 +613,12 @@ class SaveGLB:
 
         for i in range(mesh.vertices.shape[0]):
             f = f"{filename}_{counter:05}_.glb"
-            save_glb(mesh.vertices[i], mesh.faces[i], os.path.join(full_output_folder, f), metadata)
+            filepath = os.path.join(full_output_folder, f)
+            save_glb(mesh.vertices[i], mesh.faces[i], filepath, metadata)
+            
+            # upload to minio
+            folder_paths.minio_helper.upload_file("output", f, filepath)
+            
             results.append({
                 "filename": f,
                 "subfolder": subfolder,
