@@ -1,7 +1,7 @@
 [project]
 name = "ComfyUI"
-version = "0.3.30"
 requires-python = ">=3.10"
+version = "0.3.40"
 readme = "README.md"
 license = { file = "LICENSE" }
 dependencies = [
@@ -60,6 +60,7 @@ torchaudio = { index = "pytorch" }
 
 [tool.ruff]
 lint.select = [
+  "N805", # invalid-first-argument-name-for-method
   "S307", # suspicious-eval-usage
   "S102", # exec
   "T",    # print-usage
