@@ -357,6 +357,7 @@ source = { virtual = "." }
 dependencies = [
     { name = "aiohttp" },
     { name = "av" },
+    { name = "comfyui-embedded-docs" },
     { name = "comfyui-frontend-package" },
     { name = "comfyui-workflow-templates" },
     { name = "einops" },
@@ -387,8 +388,9 @@ dependencies = [
 [package.metadata]
 requires-dist = [
     { name = "aiohttp", specifier = ">=3.11.8" },
-    { name = "av", specifier = ">=14.1.0" },
-    { name = "comfyui-frontend-package", specifier = "==1.22.1" },
+    { name = "av", specifier = ">=14.2.0" },
+    { name = "comfyui-embedded-docs", specifier = "==0.2.0" },
+    { name = "comfyui-frontend-package", specifier = "==1.21.7" },
     { name = "comfyui-workflow-templates", specifier = "==0.1.25" },
     { name = "einops" },
     { name = "kornia", specifier = ">=0.7.1" },
@@ -417,12 +419,21 @@ requires-dist = [
 dev = []
 
 [[package]]
-name = "comfyui-frontend-package"
-version = "1.22.1"
+name = "comfyui-embedded-docs"
+version = "0.2.0"
 source = { registry = "https://pypi.org/simple" }
-sdist = { url = "https://files.pythonhosted.org/packages/cc/39/84ec5ce79b0970477f8aeddb74f701da4a6f1ed00f5c48bd78ff76b1a6f0/comfyui_frontend_package-1.22.1.tar.gz", hash = "sha256:2dc95c3f4be8b3abc71bf6a9bdfc712371051bb918ae8bdee7b647c29505a791", size = 9140194 }
+sdist = { url = "https://files.pythonhosted.org/packages/c1/c9/4d09a3ff67d53a6eb8c58183455280145cb6097fa7874d2b998ec4c40c4b/comfyui_embedded_docs-0.2.0.tar.gz", hash = "sha256:cf93926d69033bc2993c5cc21b81e6ad8e79553ac53eef7e633f178b1b5c8fd9", size = 386845 }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/e8/2a/acda712108e31606da59f0a98fc6b3d39ec9fe1c7e5c797f103837f6d488/comfyui_frontend_package-1.22.1-py3-none-any.whl", hash = "sha256:74c61db8e94387b5a710850e700f5a6981cdc48e59271ca25ba97a88bae1442f", size = 9317793 },
+    { url = "https://files.pythonhosted.org/packages/a9/d0/0b3fee995412f5502e81fa7a01aad374d52fc1825b4f8a8f2d6c4c7f272f/comfyui_embedded_docs-0.2.0-py3-none-any.whl", hash = "sha256:a97c5f9fb89644a87c975a10ed6e03a0fcff15bd52e141c0f177255b967907ed", size = 690167 },
+]
+
+[[package]]
+name = "comfyui-frontend-package"
+version = "1.21.7"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/fa/65/2588d7c24b05755a9c444d64d3e35f72534d054f076926f03d072b935cfe/comfyui_frontend_package-1.21.7.tar.gz", hash = "sha256:22cd48fe280c7d07c2f092d2b0951b3e3737b443c2d22812e480dd766ffb4c88", size = 9031220 }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/6f/41/23e60b0dac42da9a6a264a1a9a82046283aeddbe522717c14be4e85421fd/comfyui_frontend_package-1.21.7-py3-none-any.whl", hash = "sha256:79bb297b965d74d0f0fc91da0c5179dcbc62c6da5255aa0f9e6fabf52311043e", size = 9213053 },
 ]
 
 [[package]]

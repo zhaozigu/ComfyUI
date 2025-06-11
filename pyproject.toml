@@ -25,11 +25,12 @@ dependencies = [
     "comfyui-workflow-templates==0.1.25",
     "numpy>=1.25.0",
     "yarl>=1.18.0",
-    "av>=14.1.0",
+    "av>=14.2.0",
     "pydantic~=2.0",
     "torch",
     "torchvision",
     "torchaudio",
+    "comfyui-embedded-docs==0.2.0",
 ]
 
 [project.urls]
