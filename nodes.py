@@ -687,8 +687,9 @@ class LoraLoader:
 class LoraLoaderModelOnly(LoraLoader):
     @classmethod
     def INPUT_TYPES(s):
+        loras_names = folder_paths.get_loras_object_names()
         return {"required": { "model": ("MODEL",),
-                              "lora_name": (folder_paths.get_filename_list("loras"), ),
+                              "lora_name": (loras_names, ),
                               "strength_model": ("FLOAT", {"default": 1.0, "min": -100.0, "max": 100.0, "step": 0.01}),
                               }}
     RETURN_TYPES = ("MODEL",)
