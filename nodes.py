@@ -695,6 +695,7 @@ class LoraLoaderModelOnly(LoraLoader):
     FUNCTION = "load_lora_model_only"
 
     def load_lora_model_only(self, model, lora_name, strength_model):
+        folder_paths.download_lora_from_minio(lora_name)
         return (self.load_lora(model, None, lora_name, strength_model, 0)[0],)
 
 class VAELoader:
