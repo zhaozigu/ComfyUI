@@ -322,6 +322,88 @@ class MinioHelper:
             logging.error(f"上传文件到 Minio 失败: {str(e)}")
             return False
 
+    def upload_base64_image(self, bucket_name: str, object_name: str, base64_data: str) -> bool:
+        """上传base64图像数据到 Minio 存储桶
+        
+        Args:
+            bucket_name: 桶名称
+            object_name: 对象名称（Minio中的存储路径，建议以.png结尾）
+            base64_data: base64编码的图像数据，支持带或不带"data:image/png;base64,"前缀
+            
+        Returns:
+            bool: 上传是否成功
+        """
+        import base64
+        import tempfile
+        
+        try:
+            # 处理base64数据，移除可能的前缀
+            if base64_data.startswith('data:image'):
+                base64_data = base64_data.split(',')[1]
+            
+            # 解码base64数据
+            image_data = base64.b64decode(base64_data)
+            
+            # 创建临时文件
+            with tempfile.NamedTemporaryFile(suffix='.png', delete=False) as temp_file:
+                temp_file.write(image_data)
+                temp_file_path = temp_file.name
+            
+            try:
+                # 确保存储桶存在
+                if not self.client.bucket_exists(bucket_name):
+                    logging.info(f"存储桶 {bucket_name} 不存在，正在创建")
+                    self.client.make_bucket(bucket_name)
+                
+                logging.info(f"开始上传base64图像到 Minio: {object_name}")
+                
+                # 上传文件到 Minio
+                self.client.fput_object(
+                    bucket_name=bucket_name,
+                    object_name=object_name,
+                    file_path=temp_file_path,
+                    content_type='image/png'
+                )
+                
+                logging.info("base64图像上传成功")
+                return True
+                
+            finally:
+                # 清理临时文件
+                if os.path.exists(temp_file_path):
+                    os.unlink(temp_file_path)
+                    
+        except Exception as e:
+            logging.error(f"上传base64图像到 Minio 失败: {str(e)}")
+            return False
+
+    def get_image_url(self, bucket_name: str, object_name: str, expires: int = 3600) -> str:
+        """获取minio中图像的临时访问URL
+        
+        Args:
+            bucket_name: 桶名称
+            object_name: 对象名称（Minio中的存储路径）
+            expires: URL过期时间（秒），默认1小时
+            
+        Returns:
+            str: 临时访问URL，失败时返回None
+        """
+        try:
+            from datetime import timedelta
+            # 将秒数转换为timedelta对象
+            expires_delta = timedelta(seconds=expires)
+            
+            # 生成预签名URL
+            url = self.client.presigned_get_object(
+                bucket_name=bucket_name,
+                object_name=object_name,
+                expires=expires_delta
+            )
+            return url
+        except Exception as e:
+            logging.error(f"获取Minio图像URL失败: {str(e)}")
+            return None
+
 minio_endpoint = "localhost:5200"
 minio_access_key = "R1pgTvwrHGwO60yOxkQd"
 minio_secret_key = "cWuHVgYpMswGioVnuPAXaaOo73uLtqD3Doa8KITH"
