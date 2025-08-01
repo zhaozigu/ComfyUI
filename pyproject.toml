@@ -7,7 +7,7 @@ license = { file = "LICENSE" }
 dependencies = [
     "torchsde",
     "einops",
-    "transformers>=4.28.1",
+    "transformers>=4.37.2",
     "tokenizers>=0.13.3",
     "sentencepiece",
     "safetensors>=0.4.2",
@@ -21,8 +21,8 @@ dependencies = [
     "spandrel",
     "soundfile",
     "minio",
-    "comfyui-frontend-package==1.21.7",
-    "comfyui-workflow-templates==0.1.25",
+    "comfyui-frontend-package==1.23.4",
+    "comfyui-workflow-templates==0.1.44",
     "numpy>=1.25.0",
     "yarl>=1.18.0",
     "av>=14.2.0",
@@ -30,7 +30,10 @@ dependencies = [
     "torch",
     "torchvision",
     "torchaudio",
-    "comfyui-embedded-docs==0.2.0",
+    "comfyui-embedded-docs==0.2.4",
+    "alembic>=1.16.4",
+    "sqlalchemy>=2.0.42",
+    "pydantic-settings~=2.0",
 ]
 
 [project.urls]
