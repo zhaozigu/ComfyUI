@@ -1590,31 +1590,12 @@ class SaveImage:
     DESCRIPTION = "Saves the input images to your ComfyUI output directory."
 
     def save_images(self, images, filename_prefix="ComfyUI", prompt=None, extra_pnginfo=None):
-        # 检查输入是否有效
-        if images is None or len(images) == 0:
-            print("错误：没有图像数据可保存")
-            return {"ui": {"images": []}}
-        
-        # 检查第一个图像是否有效
-        if images[0] is None:
-            print("错误：第一个图像数据为空")
-            return {"ui": {"images": []}}
-        
         filename_prefix += self.prefix_append
         full_output_folder, filename, counter, subfolder, filename_prefix = folder_paths.get_save_image_path(filename_prefix, self.output_dir, images[0].shape[1], images[0].shape[0])
         results = list()
         for (batch_number, image) in enumerate(images):
-            # 检查当前图像是否有效
-            if image is None:
-                print(f"警告：跳过第{batch_number}个图像（数据为空）")
-                continue
-                
-            try:
-                i = 255. * image.cpu().numpy()
-                img = Image.fromarray(np.clip(i, 0, 255).astype(np.uint8))
-            except Exception as e:
-                print(f"错误：转换第{batch_number}个图像时失败: {str(e)}")
-                continue
+            i = 255. * image.cpu().numpy()
+            img = Image.fromarray(np.clip(i, 0, 255).astype(np.uint8))
             metadata = None
             if not args.disable_metadata:
                 metadata = PngInfo()
