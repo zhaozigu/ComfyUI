@@ -22,7 +22,7 @@ dependencies = [
     "soundfile",
     "minio",
     "comfyui-frontend-package==1.23.4",
-    "comfyui-workflow-templates==0.1.44",
+    "comfyui-workflow-templates==0.1.51",
     "numpy>=1.25.0",
     "yarl>=1.18.0",
     "av>=14.2.0",
