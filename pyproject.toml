@@ -1,7 +1,7 @@
 [project]
 name = "ComfyUI"
 requires-python = ">=3.10"
-version = "0.3.47"
+version = "0.3.49"
 readme = "README.md"
 license = { file = "LICENSE" }
 dependencies = [
