@@ -126,13 +126,17 @@ class SaveVideo(ComfyNodeABC):
             if len(metadata) > 0:
                 saved_metadata = metadata
         file = f"{filename}_{counter:05}_.{Types.VideoContainer.get_extension(format)}"
+        filepath = os.path.join(full_output_folder, file)
         video.save_to(
-            os.path.join(full_output_folder, file),
+            filepath,
             format=format,
             codec=codec,
             metadata=saved_metadata
         )
-
+        
+        # minio upload
+        folder_paths.minio_helper.upload_file("output", file, filepath)
+        
         results.append({
             "filename": file,
             "subfolder": subfolder,
